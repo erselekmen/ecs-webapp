@@ -17,7 +17,7 @@ definitions:
           - npm install -g @vue/cli
           - npm run build
           - npm install -g awsebcli
-          - eb init your-app-name --platform "Node.js 20" --region eu-central-1
+          - eb init training-app --platform "Node.js 20" --region eu-central-1
           - eb setenv NODE_ENV=production
           - eb use training-app-env
           - eb deploy --staged --timeout 15
