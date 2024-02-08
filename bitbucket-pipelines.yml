@@ -12,14 +12,14 @@ definitions:
 
     - step: &build-and-deploy
         name: Build and Deploy to AWS Elastic Beanstalk
-        deployment: your-app-environment # Change to your Elastic Beanstalk environment name
+        deployment: training-app-env
         script:
           - npm install -g @vue/cli
           - npm run build
           - npm install -g awsebcli
-          - eb init your-app-name --platform "Node.js 20" --region eu-central-1 # Change to your app name and AWS region
+          - eb init your-app-name --platform "Node.js 20" --region eu-central-1
           - eb setenv NODE_ENV=production
-          - eb use training-app-env # Change to your specific Elastic Beanstalk environment name
+          - eb use training-app-env
           - eb deploy --staged --timeout 15
 
 pipelines:
