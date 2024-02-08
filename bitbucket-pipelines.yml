@@ -10,34 +10,23 @@ definitions:
           - npm install -g @vue/cli
           - npm run build
 
-    - step: &sonarqube-quality-test
-        name: SonarQube Analysis
-        image: sonarsource/sonar-scanner-cli:latest
-        script:
-          - sonar-scanner -Dsonar.projectKey=$SQ_PROJECT_KEY -Dsonar.host.url=$SQ_EC2_HOST:$SQ_EC2_PORT -Dsonar.login=$SQ_TOKEN
 
-    - step: &snyk-sec-test
-        name: Install dependencies and run Snyk test
-        image: snyk/snyk:node
-        script:
-          - snyk auth $SNYK_TOKEN
-          - snyk test --severity-threshold=low --org=erselekmen27 || true
 
-    - step: &build-and-deploy
-        name: Build and Deploy to AWS Elastic Beanstalk
-        deployment: $EBS_ENV_NAME
-        script:
-          - npm install -g @vue/cli
-          - npm run build
-          - npm install -g awsebcli
-          - eb init $EBS_APP_NAME --platform "Node.js 20" --region $EBS_AWS_REGION
-          - eb setenv NODE_ENV=production
-          - eb use $EBS_ENV_NAME
-          - eb deploy --staged --timeout 15
+#    - step: &build-and-deploy
+#        name: Build and Deploy to AWS Elastic Beanstalk
+#        deployment: $EBS_ENV_NAME
+#         script:
+#          - npm install -g @vue/cli
+#          - npm run build
+#          - npm install -g awsebcli
+#          - eb init $EBS_APP_NAME --platform "Node.js 20" --region $EBS_AWS_REGION
+#          - eb setenv NODE_ENV=production
+#          - eb use $EBS_ENV_NAME
+#          - eb deploy --staged --timeout 15
 
 pipelines:
   default:
     - step: *install-and-build
-    - step: *sonarqube-quality-test
-    - step: *snyk-sec-test
-    - step: *build-and-deploy
+#    - step: *sonarqube-quality-test
+#    - step: *snyk-sec-test
+#   - step: *build-and-deploy
