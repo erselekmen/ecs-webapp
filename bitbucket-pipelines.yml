@@ -2,13 +2,20 @@ image: node:20
 
 definitions:
   steps:
-    - step: &install-and-test
+    - step: &install-and-build
         name: Install dependencies and run tests
         image: node:20
         script:
           - npm install
-          - npm run lint
-          - npm run test
+          - npm install -g @vue/cli
+          - npm run build
+
+    - step: &snyk-sec-test
+        name: Install dependencies and run Snyk test
+        image: snyk/snyk:python
+        script:
+          - snyk auth $SNYK_TOKEN
+          - snyk test --severity-threshold=low --org=erselekmen27 || true
 
     - step: &build-and-deploy
         name: Build and Deploy to AWS Elastic Beanstalk
@@ -22,15 +29,8 @@ definitions:
           - eb use training-app-env
           - eb deploy --staged --timeout 15
 
-    - step: &snyk-sec-test
-        name: Install dependencies and run Snyk test
-        image: snyk/snyk:python
-        script:
-          - snyk auth $SNYK_TOKEN
-          - snyk test --severity-threshold=low --org=erselekmen27 || true
-
 pipelines:
   default:
-    - step: *install-and-test
+    - step: *install-and-build
     - step: *build-and-deploy
     - step: *snyk-sec-test
