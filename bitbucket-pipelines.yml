@@ -1,0 +1,28 @@
+image: node:20
+
+definitions:
+  steps:
+    - step: &install-and-test
+        name: Install dependencies and run tests
+        image: node:20
+        script:
+          - npm install
+          - npm run lint
+          - npm run test
+
+    - step: &build-and-deploy
+        name: Build and Deploy to AWS Elastic Beanstalk
+        deployment: your-app-environment # Change to your Elastic Beanstalk environment name
+        script:
+          - npm install -g @vue/cli
+          - npm run build
+          - npm install -g awsebcli
+          - eb init your-app-name --platform "Node.js 20" --region eu-central-1 # Change to your app name and AWS region
+          - eb setenv NODE_ENV=production
+          - eb use training-app-env # Change to your specific Elastic Beanstalk environment name
+          - eb deploy --staged --timeout 15
+
+pipelines:
+  default:
+    - step: *install-and-test
+    - step: *build-and-deploy
