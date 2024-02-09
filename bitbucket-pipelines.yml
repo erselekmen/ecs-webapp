@@ -11,7 +11,7 @@ definitions:
 #          - npm run build
 
     - step: &build-and-deploy
-        name: Build and Deploy to AWS Elastic Beanstalk
+        name: Build and Deploy to AWS S3
         image: node:20
         oidc: true
         script:
@@ -19,8 +19,8 @@ definitions:
           - npm install -g @vue/cli
           - npm run build
           - apt-get update # Update the package lists
-          - apt-get install -y python3-pip # Install pip3 for Python3
-          - pip3 install awscli --upgrade # Install AWS CLI using pip3
+        #  - apt-get install -y python3-pip # Install pip3 for Python3
+          - apt-get install awscli --upgrade # Install AWS CLI
           - export AWS_REGION=eu-central-1
           - export AWS_ROLE_ARN=arn:aws:iam::110975517810:role/s3-bitbucket-access-role
           - export AWS_WEB_IDENTITY_TOKEN_FILE=$(pwd)/web-identity-token
