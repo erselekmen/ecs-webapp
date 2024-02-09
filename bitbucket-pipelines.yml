@@ -1,4 +1,6 @@
 image: node:20
+deployment: dev
+
 
 definitions:
   steps:
@@ -37,15 +39,9 @@ pipelines:
   deployment: dev
   branches:
     ersel-dev:
-      - step:
-          <<: *snyk-sec-test
-          deployment: dev
-
+      - step: *snyk-sec-test
       - step: *install-and-build
-
-      - step:
-          <<: *deploy-to-s3
-          deployment: dev
+      - step: *deploy-to-s3
 
 
 #definitions:
