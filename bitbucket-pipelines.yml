@@ -2,9 +2,9 @@ image: node:20
 
 definitions:
   steps:
+    - deployment: dev
     - step: &snyk-sec-test
         name: Run Security Test with Snyk Code Security
-        deployment: dev
         image: snyk/snyk:node
         script:
           - snyk auth $SNYK_TOKEN
