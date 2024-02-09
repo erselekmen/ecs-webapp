@@ -1,8 +1,7 @@
 image: node:20
-deployment: dev
-
 
 definitions:
+  deployment: dev
   steps:
     - step: &snyk-sec-test
         name: Run Security Test with Snyk Code Security
@@ -36,7 +35,6 @@ definitions:
 
 
 pipelines:
-  deployment: dev
   branches:
     ersel-dev:
       - step: *snyk-sec-test
