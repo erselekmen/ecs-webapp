@@ -4,7 +4,6 @@ definitions:
   steps:
     - step: &snyk-sec-test
         name: Run Security Test with Snyk Code Security
-        deployment: dev
         image: snyk/snyk:node
         script:
           - snyk auth $SNYK_TOKEN
@@ -12,7 +11,6 @@ definitions:
 
     - step: &install-and-build
         name: Install Dependencies and Build
-        deployment: dev
         caches:
           - node
         script:
@@ -24,7 +22,6 @@ definitions:
 
     - step: &deploy-to-s3
         name: Install aws-cli and Deploy to AWS S3
-        deployment: dev
         oidc: true
         script:
           - apt-get update
@@ -37,11 +34,18 @@ definitions:
 
 
 pipelines:
+  deployment: dev
   branches:
     ersel-dev:
-      - step: *snyk-sec-test
+      - step:
+          <<: *snyk-sec-test
+          deployment: dev
+
       - step: *install-and-build
-      - step: *deploy-to-s3
+
+      - step:
+          <<: *deploy-to-s3
+          deployment: dev
 
 
 #definitions:
