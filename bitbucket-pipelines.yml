@@ -18,7 +18,9 @@ definitions:
           - npm install
           - npm install -g @vue/cli
           - npm run build
-          - npm install -g aws-cli
+          - apt-get update # Update the package lists
+          - apt-get install -y python3-pip # Install pip3 for Python3
+          - pip3 install awscli --upgrade # Install AWS CLI using pip3
           - export AWS_REGION=eu-central-1
           - export AWS_ROLE_ARN=arn:aws:iam::110975517810:role/s3-bitbucket-access-role
           - export AWS_WEB_IDENTITY_TOKEN_FILE=$(pwd)/web-identity-token
