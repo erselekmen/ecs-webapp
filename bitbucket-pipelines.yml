@@ -2,13 +2,27 @@ image: node:20
 
 definitions:
   steps:
-    - step: &install-and-build
-        name: Install dependencies and run tests
+#    - step: &install-and-build
+#        name: Install dependencies and run tests
+#        image: node:20
+#        script:
+#          - npm install
+#          - npm install -g @vue/cli
+#          - npm run build
+
+    - step: &build-and-deploy
+        name: Build and Deploy to AWS Elastic Beanstalk
         image: node:20
+        oidc: true
         script:
-          - npm install
           - npm install -g @vue/cli
           - npm run build
+          - npm install -g aws-cli
+          - export AWS_REGION=eu-central-1
+          - export AWS_ROLE_ARN=arn:aws:iam::110975517810:role/s3-bitbucket-access-role
+          - export AWS_WEB_IDENTITY_TOKEN_FILE=$(pwd)/web-identity-token
+          - echo $BITBUCKET_STEP_OIDC_TOKEN > $(pwd)/web-identity-token
+          - aws s3 sync dist/ s3://training-app-data/
 
 #    - step: &sonarqube-quality-test
 #        name: SonarQube Analysis
@@ -36,8 +50,11 @@ definitions:
 #          - eb deploy --staged --timeout 15
 
 pipelines:
-  default:
-    - step: *install-and-build
+  branches:
+    ersel-dev:
+      - step: *build-and-deploy
+
+#    - step: *install-and-build
 #    - step: *sonarqube-quality-test
 #    - step: *snyk-sec-test
 #    - step: *build-and-deploy
