@@ -2,31 +2,40 @@ image: node:20
 
 definitions:
   steps:
-#    - step: &install-and-build
-#        name: Install dependencies and run tests
-#        image: node:20
-#        script:
-#          - npm install
-#          - npm install -g @vue/cli
-#          - npm run build
-
-    - step: &build-and-deploy
-        name: Build and Deploy to AWS S3
-        image: node:20
-        oidc: true
+    - step: &install-and-build
+        name: Install npm dependencies and build the app
+        caches:
+          - node
         script:
           - npm install
           - npm install -g @vue/cli
           - npm run build
-          - apt-get update # Update the package lists
-        #  - apt-get install -y python3-pip # Install pip3 for Python3
-          - apt-get install -y awscli --upgrade # Install AWS CLI
+        artifacts:
+          - dist/** # Replace with the path to your build directory
+
+    - step: &deploy-to-s3
+        name: Build and Deploy to AWS S3
+        oidc: true
+        script:
+          - apt-get update
+          - apt-get install -y awscli --upgrade
           - export AWS_REGION=eu-central-1
           - export AWS_ROLE_ARN=arn:aws:iam::110975517810:role/s3-bitbucket-access-role
           - export AWS_WEB_IDENTITY_TOKEN_FILE=$(pwd)/web-identity-token
           - echo $BITBUCKET_STEP_OIDC_TOKEN > $(pwd)/web-identity-token
           - aws s3 sync dist/ s3://training-app-data/
 
+
+pipelines:
+  branches:
+    ersel-dev:
+      - step: *install-and-build
+      - step: *deploy-to-s3
+
+
+
+#definitions:
+#  steps:
 #    - step: &sonarqube-quality-test
 #        name: SonarQube Analysis
 #        image: sonarsource/sonar-scanner-cli:latest
@@ -52,12 +61,9 @@ definitions:
 #          - eb use $EBS_ENV_NAME
 #          - eb deploy --staged --timeout 15
 
-pipelines:
-  branches:
-    ersel-dev:
-      - step: *build-and-deploy
-
-#    - step: *install-and-build
+#pipelines:
+#  branches:
+#    ersel-dev:
 #    - step: *sonarqube-quality-test
 #    - step: *snyk-sec-test
 #    - step: *build-and-deploy
