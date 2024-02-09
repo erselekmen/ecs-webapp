@@ -41,7 +41,6 @@ pipelines:
       - step: *deploy-to-s3
 
 
-
 #definitions:
 #  steps:
 #    - step: &sonarqube-quality-test
