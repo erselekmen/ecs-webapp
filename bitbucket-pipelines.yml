@@ -4,6 +4,7 @@ definitions:
   steps:
     - step: &snyk-sec-test
         name: Run Security Test with Snyk Code Security
+        deployment: dev
         image: snyk/snyk:node
         script:
           - snyk auth $SNYK_TOKEN
@@ -11,6 +12,7 @@ definitions:
 
     - step: &install-and-build
         name: Install Dependencies and Build
+        deployment: dev
         caches:
           - node
         script:
@@ -22,12 +24,13 @@ definitions:
 
     - step: &deploy-to-s3
         name: Install aws-cli and Deploy to AWS S3
+        deployment: dev
         oidc: true
         script:
           - apt-get update
           - apt-get install -y awscli --upgrade
-          - export AWS_REGION=eu-central-1
-          - export AWS_ROLE_ARN=arn:aws:iam::110975517810:role/s3-bitbucket-access-role
+          - export AWS_REGION=$AWS_REGION
+          - export AWS_ROLE_ARN=$AWS_ROLE_ARN
           - export AWS_WEB_IDENTITY_TOKEN_FILE=$(pwd)/web-identity-token
           - echo $BITBUCKET_STEP_OIDC_TOKEN > $(pwd)/web-identity-token
           - aws s3 sync dist/ s3://training-app-data/
@@ -35,7 +38,7 @@ definitions:
 
 pipelines:
   branches:
-    test:
+    ersel-dev:
       - step: *snyk-sec-test
       - step: *install-and-build
       - step: *deploy-to-s3
