@@ -2,7 +2,6 @@ image: node:20
 
 definitions:
   steps:
-    - deployment: dev
     - step: &snyk-sec-test
         name: Run Security Test with Snyk Code Security
         image: snyk/snyk:node
