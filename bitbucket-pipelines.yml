@@ -3,7 +3,7 @@ image: node:20
 definitions:
   steps:
     - step: &install-and-build
-        name: Install npm dependencies and build the app
+        name: Install Dependencies and Build
         caches:
           - node
         script:
@@ -11,10 +11,10 @@ definitions:
           - npm install -g @vue/cli
           - npm run build
         artifacts:
-          - dist/** # Replace with the path to your build directory
+          - dist/** # Path to the build directory
 
     - step: &deploy-to-s3
-        name: Build and Deploy to AWS S3
+        name: Install aws-cli and Deploy to AWS S3
         oidc: true
         script:
           - apt-get update
@@ -28,7 +28,7 @@ definitions:
 
 pipelines:
   branches:
-    ersel-dev:
+    test:
       - step: *install-and-build
       - step: *deploy-to-s3
 
