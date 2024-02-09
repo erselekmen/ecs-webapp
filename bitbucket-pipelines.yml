@@ -2,6 +2,13 @@ image: node:20
 
 definitions:
   steps:
+    - step: &snyk-sec-test
+        name: Run Security Test with Snyk Code Security
+        image: snyk/snyk:node
+        script:
+          - snyk auth $SNYK_TOKEN
+          - snyk test --severity-threshold=low --org=erselekmen27 || true
+
     - step: &install-and-build
         name: Install Dependencies and Build
         caches:
@@ -29,6 +36,7 @@ definitions:
 pipelines:
   branches:
     test:
+      - step: *snyk-sec-test
       - step: *install-and-build
       - step: *deploy-to-s3
 
@@ -42,28 +50,9 @@ pipelines:
 #        script:
 #          - sonar-scanner -Dsonar.projectKey=$SQ_PROJECT_KEY -Dsonar.host.url=$SQ_EC2_HOST:$SQ_EC2_PORT -Dsonar.login=$SQ_TOKEN
 
-#    - step: &snyk-sec-test
-#        name: Install dependencies and run Snyk test
-#        image: snyk/snyk:node
-#        script:
-#          - snyk auth $SNYK_TOKEN
-#          - snyk test --severity-threshold=low --org=erselekmen27 || true
-
-#    - step: &build-and-deploy
-#        name: Build and Deploy to AWS Elastic Beanstalk
-#        deployment: $EBS_ENV_NAME
-#         script:
-#          - npm install -g @vue/cli
-#          - npm run build
-#          - npm install -g awsebcli
-#          - eb init $EBS_APP_NAME --platform "Node.js 20" --region $EBS_AWS_REGION
-#          - eb setenv NODE_ENV=production
-#          - eb use $EBS_ENV_NAME
-#          - eb deploy --staged --timeout 15
 
 #pipelines:
 #  branches:
 #    ersel-dev:
 #    - step: *sonarqube-quality-test
-#    - step: *snyk-sec-test
 #    - step: *build-and-deploy
