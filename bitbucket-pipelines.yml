@@ -22,17 +22,18 @@ definitions:
 
 
     - step: &deploy-to-s3
-      image: atlassian/aws-s3-deploy:1.6.0
-      variables:
-        AWS_DEFAULT_REGION: $AWS_REGION # Optional if already defined in the context or OIDC used.
-        AWS_OIDC_ROLE_ARN: $BITBUCKET_STEP_OIDC_TOKEN # Optional by default. Required for OpenID Connect (OIDC) authentication.
-        AWS_ROLE_ARN: $AWS_ROLE_ARN # Optional. Required for STS authentication.
-        S3_BUCKET: 'training-app-build'
-        LOCAL_PATH: '$(pwd)'
+        name: pipe
+        image: atlassian/aws-s3-deploy:1.6.0
+        variables:
+          AWS_DEFAULT_REGION: $AWS_REGION # Optional if already defined in the context or OIDC used.
+          AWS_OIDC_ROLE_ARN: $BITBUCKET_STEP_OIDC_TOKEN # Optional by default. Required for OpenID Connect (OIDC) authentication.
+          AWS_ROLE_ARN: $AWS_ROLE_ARN # Optional. Required for STS authentication.
+          S3_BUCKET: 'training-app-build'
+          LOCAL_PATH: '$(pwd)'
 
 pipelines:
   branches:
-    dev:
+    ersel-dev:
       - step: *snyk-sec-test
       - step: *install-and-build
 #     - step: *build-image
