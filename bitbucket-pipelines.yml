@@ -18,28 +18,26 @@ definitions:
           - npm install -g @vue/cli
           - npm run build
         artifacts:
-          - dist/** # Path to the build directory
+          - dist/**
+
 
     - step: &deploy-to-s3
-        name: Install aws-cli and Deploy to AWS S3
-        oidc: true
-        script:
-          - apt-get update
-          - apt-get install -y awscli --upgrade
-          - export AWS_REGION=$AWS_REGION
-          - export AWS_ROLE_ARN=$AWS_ROLE_ARN
-          - export AWS_WEB_IDENTITY_TOKEN_FILE=$(pwd)/web-identity-token
-          - echo $BITBUCKET_STEP_OIDC_TOKEN > $(pwd)/web-identity-token
-          - aws s3 sync dist/ s3://training-app-build/
-
+      image: atlassian/aws-s3-deploy:1.6.0
+      variables:
+        AWS_DEFAULT_REGION: $AWS_REGION # Optional if already defined in the context or OIDC used.
+        AWS_OIDC_ROLE_ARN: $BITBUCKET_STEP_OIDC_TOKEN # Optional by default. Required for OpenID Connect (OIDC) authentication.
+        AWS_ROLE_ARN: $AWS_ROLE_ARN # Optional. Required for STS authentication.
+        S3_BUCKET: 'training-app-build'
+        LOCAL_PATH: '$(pwd)'
 
 pipelines:
   branches:
     dev:
       - step: *snyk-sec-test
       - step: *install-and-build
+#     - step: *build-image
       - step: *deploy-to-s3
-
+#     - step: *deploy-to-ecs
 
 #definitions:
 #  steps:
@@ -54,4 +52,3 @@ pipelines:
 #  branches:
 #    ersel-dev:
 #    - step: *sonarqube-quality-test
-#    - step: *build-and-deploy
