@@ -44,7 +44,7 @@ definitions:
         services:
           - docker
         script:
-#          - export TEMP_ROLE=$(aws sts assume-role --role-arn "arn:aws:iam::110975517810:role/ECS-bitbucket-pipelines-sts-access" --role-session-name bitbucket-pipeline --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' --output text)
+          - export TEMP_ROLE=$(aws sts assume-role --role-arn "arn:aws:iam::110975517810:role/ECS-bitbucket-pipelines-sts-access" --role-session-name bitbucket-pipeline --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' --output text)
           - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
           - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
           - export AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN
