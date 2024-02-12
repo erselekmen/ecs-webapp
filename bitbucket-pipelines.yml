@@ -9,6 +9,12 @@ definitions:
           - snyk auth $SNYK_TOKEN
           - snyk test --severity-threshold=low --org=erselekmen27 || true
 
+#    - step: &sonarqube-quality-test
+#        name: SonarQube Code Quality Analysis
+#        image: sonarsource/sonar-scanner-cli:latest
+#        script:
+#          - sonar-scanner -Dsonar.projectKey=$SQ_PROJECT_KEY -Dsonar.host.url=$SQ_EC2_HOST:$SQ_EC2_PORT -Dsonar.login=$SQ_TOKEN
+
     - step: &install-and-build
         name: Install Dependencies and Build
         caches:
@@ -38,40 +44,24 @@ definitions:
         services:
           - docker
         script:
-          # Build the Docker image
+          - export TEMP_ROLE=$(aws sts assume-role --role-arn "arn:aws:iam::110975517810:role/ECS-bitbucket-pipelines-sts-access" --role-session-name bitbucket-pipeline --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' --output text)
+          - export AWS_ACCESS_KEY_ID=$(echo $TEMP_ROLE | cut -d' ' -f1)
+          - export AWS_SECRET_ACCESS_KEY=$(echo $TEMP_ROLE | cut -d' ' -f2)
+          - export AWS_SESSION_TOKEN=$(echo $TEMP_ROLE | cut -d' ' -f3)
+
           - docker build -t $ECR_REPOSITORY:latest .
-
-          # Authenticate to ECR
           - $(aws ecr get-login --no-include-email --region $AWS_REGION)
-
-          # Tag the Docker image
           - docker tag $ECR_REPOSITORY:latest $ECR_REPOSITORY:$BITBUCKET_COMMIT
-
-          # Push the Docker image to ECR
           - docker push $ECR_REPOSITORY:latest
           - docker push $ECR_REPOSITORY:$BITBUCKET_COMMIT
-
-          # Update ECS service to use the new image
           - aws ecs update-service --cluster $ECS_CLUSTER_NAME --service $ECS_SERVICE_NAME --force-new-deployment
+
 
 pipelines:
   branches:
     ersel-dev:
-      - step: *snyk-sec-test
       - step: *build-and-deploy-ecs
+      - step: *snyk-sec-test
       - step: *install-and-build
       - step: *deploy-to-s3
-
-#definitions:
-#  steps:
-#    - step: &sonarqube-quality-test
-#        name: SonarQube Analysis
-#        image: sonarsource/sonar-scanner-cli:latest
-#        script:
-#          - sonar-scanner -Dsonar.projectKey=$SQ_PROJECT_KEY -Dsonar.host.url=$SQ_EC2_HOST:$SQ_EC2_PORT -Dsonar.login=$SQ_TOKEN
-
-
-#pipelines:
-#  branches:
-#    ersel-dev:
-#    - step: *sonarqube-quality-test
+#      - step: *sonarqube-quality-test
