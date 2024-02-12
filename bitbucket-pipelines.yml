@@ -24,6 +24,11 @@ definitions:
         name: Deploy to AWS S3
         image: atlassian/pipelines-awscli
         script:
+          - export ROLE_SESSION_NAME=bitbucket-deploy-session  # Set a unique session name
+          - >-
+            ASSUME_ROLE_CREDENTIALS=$(aws sts assume-role --role-arn $AWS_ROLE_ARN
+            --role-session-name $ROLE_SESSION_NAME --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' --output text)
+
           - pipe: atlassian/aws-s3-deploy:1.6.0
             variables:
               AWS_DEFAULT_REGION: $AWS_REGION # Optional if already defined in the context or OIDC used.
@@ -31,6 +36,8 @@ definitions:
               AWS_ROLE_ARN: $AWS_ROLE_ARN # Optional. Required for STS authentication.
               S3_BUCKET: 'training-app-build'
               LOCAL_PATH: 'dist'
+
+
 
 pipelines:
   branches:
