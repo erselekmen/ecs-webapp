@@ -50,7 +50,7 @@ definitions:
           - export AWS_SESSION_TOKEN=$(echo $TEMP_ROLE | cut -d' ' -f3)
 
           - docker build -t $ECR_REPOSITORY:latest .
-          - $(aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin your-account-id.dkr.ecr.your-region.amazonaws.com)
+          - $(aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin 110975517810.dkr.ecr.eu-central-1.amazonaws.com)
           - docker tag $ECR_REPOSITORY:latest $ECR_REPOSITORY:$BITBUCKET_COMMIT
           - docker push $ECR_REPOSITORY:latest
           - docker push $ECR_REPOSITORY:$BITBUCKET_COMMIT
