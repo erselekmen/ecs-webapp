@@ -40,6 +40,9 @@ definitions:
 
     - step: &build-and-deploy-ecs
         name: Build and Deploy to ECS
+        image: atlassian/pipelines-awscli  # Ensure this image has the necessary tools
+        services:
+          - docker
         script:
           - pipe: atlassian/aws-ecr-push-image:1.4.1
             variables:
