@@ -48,6 +48,7 @@ definitions:
           - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
           - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
           - export AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN
+          - export AWS_REGION=$AWS_REGION
 
           - docker build -t $ECR_REPOSITORY:latest .
           - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin 110975517810.dkr.ecr.eu-central-1.amazonaws.com/training-app
