@@ -50,7 +50,7 @@ definitions:
               AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
               AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
               AWS_DEFAULT_REGION: $AWS_REGION
-              IMAGE_NAME: $ECR_REPOSITORY:$BITBUCKET_COMMIT
+              IMAGE_NAME: $AWS_ECR_REPOSITORY
               AWS_OIDC_ROLE_ARN: $AWS_ROLE_ARN # Optional
 
           - pipe: atlassian/aws-ecs-deploy:1.12.1
