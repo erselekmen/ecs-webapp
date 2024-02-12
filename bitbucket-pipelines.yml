@@ -38,6 +38,7 @@ definitions:
           - echo $BITBUCKET_STEP_OIDC_TOKEN > $(pwd)/web-identity-token
           - aws s3 sync dist/ s3://training-app-build/
 
+
     - step: &build-and-deploy-ecs
         name: Build and Deploy to ECS
         image: atlassian/pipelines-awscli  # Ensure this image has the necessary tools
