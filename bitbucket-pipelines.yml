@@ -31,7 +31,7 @@ definitions:
 
 pipelines:
   branches:
-    dev:
+    ersel-dev:
       - step: *snyk-sec-test
       - step: *install-and-build
 #     - step: *build-image
