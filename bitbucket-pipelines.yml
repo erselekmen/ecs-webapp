@@ -49,8 +49,7 @@ definitions:
           - export AWS_SECRET_ACCESS_KEY=$(echo $TEMP_ROLE | cut -d' ' -f2)
           - export AWS_SESSION_TOKEN=$(echo $TEMP_ROLE | cut -d' ' -f3)
 
-          - docker build -t $ECR_REPOSITORY:latest .
-          - $(aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin 110975517810.dkr.ecr.eu-central-1.amazonaws.com)
+          - $(aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin 110975517810.dkr.ecr.eu-central-1.amazonaws.com/training-app)
           - docker tag $ECR_REPOSITORY:latest $ECR_REPOSITORY:$BITBUCKET_COMMIT
           - docker push $ECR_REPOSITORY:latest
           - docker push $ECR_REPOSITORY:$BITBUCKET_COMMIT
