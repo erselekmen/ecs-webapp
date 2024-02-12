@@ -44,21 +44,23 @@ definitions:
         services:
           - docker
         script:
-          - pipe: atlassian/aws-ecr-push-image:1.4.1
+          - pipe: atlassian/aws-ecs-deploy:1.12.1
             variables:
               AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
               AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
-              AWS_DEFAULT_REGION: $AWS_REGION
-              IMAGE_NAME: $ECR_REPOSITORY
-              TAGS: 'latest, $BITBUCKET_COMMIT'
-
-          - pipe: atlassian/aws-ecs-deploy:1.3.2
-            variables:
-              AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
-              AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
-              AWS_DEFAULT_REGION: $AWS_REGION
+              AWS_REGION: $AWS_REGION
+              AWS_OIDC_ROLE_ARN: $AWS_ROLE_ARN # Optional
               CLUSTER_NAME: $ECS_CLUSTER_NAME
               SERVICE_NAME: $ECS_SERVICE_NAME
+
+          - pipe: atlassian/aws-ecr-push-image:2.3.0
+            variables:
+              AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+              AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+              AWS_REGION: $AWS_REGION
+              IMAGE_NAME: $ECR_REPOSITORY
+              AWS_OIDC_ROLE_ARN: $AWS_ROLE_ARN # Optional
+
 
 pipelines:
   branches:
