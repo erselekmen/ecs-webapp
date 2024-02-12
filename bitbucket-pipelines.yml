@@ -54,7 +54,6 @@ definitions:
               IMAGE_NAME: $AWS_ECR_REPOSITORY
               AWS_OIDC_ROLE_ARN: $AWS_ROLE_ARN # Optional
 
-
           - pipe: atlassian/aws-ecs-deploy:1.12.1
             oidc: true
             variables:
