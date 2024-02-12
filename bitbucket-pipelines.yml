@@ -32,15 +32,35 @@ definitions:
           - echo $BITBUCKET_STEP_OIDC_TOKEN > $(pwd)/web-identity-token
           - aws s3 sync dist/ s3://training-app-build/
 
+    - step: &build-and-deploy-ecs
+        name: Build and Deploy to ECS
+        image: atlassian/pipelines-awscli
+        services:
+          - docker
+        script:
+          # Build the Docker image
+          - docker build -t $ECR_REPOSITORY:latest .
+
+          # Authenticate to ECR
+          - $(aws ecr get-login --no-include-email --region $AWS_REGION)
+
+          # Tag the Docker image
+          - docker tag $ECR_REPOSITORY:latest $ECR_REPOSITORY:$BITBUCKET_COMMIT
+
+          # Push the Docker image to ECR
+          - docker push $ECR_REPOSITORY:latest
+          - docker push $ECR_REPOSITORY:$BITBUCKET_COMMIT
+
+          # Update ECS service to use the new image
+          - aws ecs update-service --cluster $ECS_CLUSTER_NAME --service $ECS_SERVICE_NAME --force-new-deployment
 
 pipelines:
   branches:
-    dev:
+    ersel-dev:
       - step: *snyk-sec-test
+      - step: *build-and-deploy-ecs
       - step: *install-and-build
-#      - step: *build-image
       - step: *deploy-to-s3
-#     - step: *deploy-to-ecs
 
 #definitions:
 #  steps:
