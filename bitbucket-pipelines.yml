@@ -9,6 +9,7 @@ definitions:
           - snyk auth $SNYK_TOKEN_ENES
           - snyk test --severity-threshold=low --org=h.enesyldrm || true
 
+
 #    - step: &install-and-build
 #        name: Install Dependencies and Build
 #        caches:
