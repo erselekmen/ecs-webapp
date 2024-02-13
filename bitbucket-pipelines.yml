@@ -45,7 +45,6 @@ definitions:
         services:
           - docker
         script:
-          - echo "$AWS_ECR_REPOSITORY:latest///$BITBUCKET_COMMIT"
           - docker build -t $AWS_ECR_REPOSITORY:latest -t $BITBUCKET_COMMIT .
 
           - pipe: atlassian/aws-ecr-push-image:2.3.0
@@ -74,9 +73,8 @@ definitions:
 pipelines:
   branches:
     ersel-dev:
+      - step: *snyk-sec-test
+#      - step: *sonarqube-quality-test
       - step: *install-and-build
       - step: *deploy-to-s3
       - step: *build-and-deploy-ecs
-      - step: *snyk-sec-test
-#      - step: *sonarqube-quality-test
-
