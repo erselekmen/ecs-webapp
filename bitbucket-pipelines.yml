@@ -6,7 +6,7 @@ definitions:
         name: Run Security Test with Snyk Code Security
         image: snyk/snyk:node
         script:
-          - snyk auth $SNYK_TOKEN
+          - snyk auth $SNYK_TOKEN2
           - snyk test --severity-threshold=low --org=erselekmen27 || true
 
 #    - step: &sonarqube-quality-test
