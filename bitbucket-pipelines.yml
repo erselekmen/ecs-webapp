@@ -36,7 +36,7 @@ definitions:
           - export AWS_ROLE_ARN=$AWS_ROLE_ARN
           - export AWS_WEB_IDENTITY_TOKEN_FILE=$(pwd)/web-identity-token
           - echo $BITBUCKET_STEP_OIDC_TOKEN > $(pwd)/web-identity-token
-          - aws s3 sync dist/ s3://training-app-build/
+          - aws s3 sync dist/ s3://training-app-build/ --region eu-central-1
 
 
     - step: &build-and-deploy-ecs
@@ -75,6 +75,6 @@ pipelines:
     ersel-dev:
       - step: *snyk-sec-test
 #      - step: *sonarqube-quality-test
-#       - step: *install-and-build
-#       - step: *deploy-to-s3
-#       - step: *build-and-deploy-ecs
+      - step: *install-and-build
+      - step: *deploy-to-s3
+      - step: *build-and-deploy-ecs
