@@ -68,8 +68,6 @@ definitions:
               SERVICE_NAME: $ECS_SERVICE_NAME
 
 
-
-
 pipelines:
   branches:
     ersel-dev:
