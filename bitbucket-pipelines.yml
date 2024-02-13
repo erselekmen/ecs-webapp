@@ -41,8 +41,14 @@ definitions:
 
     - step: &build-and-deploy-ecs
         name: Build and Deploy to ECS
-        image: atlassian/pipelines-awscli  # Ensure this image has the necessary tools
+        image: atlassian/pipelines-awscli
+        services:
+          - docker
         script:
+          - echo "Building Docker image..."
+          - docker build -t $AWS_ECR_REPOSITORY:latest -t $AWS_ECR_REPOSITORY:$BITBUCKET_COMMIT .
+
+          - echo "Pushing Docker image to ECR..."
           - pipe: atlassian/aws-ecr-push-image:2.3.0
             oidc: true
             variables:
@@ -51,6 +57,7 @@ definitions:
               AWS_DEFAULT_REGION: $AWS_REGION
               IMAGE_NAME: $AWS_ECR_REPOSITORY
               AWS_OIDC_ROLE_ARN: $AWS_ROLE_ARN # Optional
+              TAG: 'latest, $BITBUCKET_COMMIT'
 
           - pipe: atlassian/aws-ecs-deploy:1.12.1
             oidc: true
