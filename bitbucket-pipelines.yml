@@ -4,7 +4,7 @@ definitions:
   steps:
     - step: &snyk-sec-test
         name: Run Security Test with Snyk Code Security
-#        image: snyk/snyk:node
+        image: snyk/snyk:node
         script:
           - snyk auth $SNYK_TOKEN_ENES
           - snyk test --severity-threshold=low --org=henesyildirim || true
