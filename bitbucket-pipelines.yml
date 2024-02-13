@@ -7,7 +7,7 @@ definitions:
         image: snyk/snyk:node
         script:
           - snyk auth $SNYK_TOKEN_ENES
-          - snyk test --severity-threshold=low --org=usoyldrm || true
+          - snyk test --severity-threshold=low || true
 
 #    - step: &install-and-build
 #        name: Install Dependencies and Build
