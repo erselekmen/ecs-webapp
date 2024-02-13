@@ -9,36 +9,36 @@ definitions:
           - snyk auth $SNYK_TOKEN_ENES
           - snyk test --severity-threshold=low --org=usoyldrm || true
 
-#    - step: &install-and-build
-#        name: Install Dependencies and Build
-#        caches:
-#          - node
-#        script:
-#          - npm install
-#          - npm install -g @vue/cli
-#          - npm run build
-#        artifacts:
-#          - dist/** # Path to the build directory
+    - step: &install-and-build
+        name: Install Dependencies and Build
+        caches:
+          - node
+        script:
+          - npm install
+          - npm install -g @vue/cli
+          - npm run build
+        artifacts:
+          - dist/** # Path to the build directory
 
-#    - step: &deploy-to-s3
-#        name: Install aws-cli and Deploy to AWS S3
-#        oidc: true
-#        script:
-#          - apt-get update
-#          - apt-get install -y awscli --upgrade
-#          - export AWS_REGION=$AWS_REGION
-#          - export AWS_ROLE_ARN=$AWS_ROLE_ARN
-#          - export AWS_WEB_IDENTITY_TOKEN_FILE=$(pwd)/web-identity-token
-#          - echo $BITBUCKET_STEP_OIDC_TOKEN > $(pwd)/web-identity-token
-#          - aws s3 sync dist/ s3://training-app-data/
+    - step: &deploy-to-s3
+        name: Install aws-cli and Deploy to AWS S3
+        oidc: true
+        script:
+          - apt-get update
+          - apt-get install -y awscli --upgrade
+          - export AWS_REGION=$AWS_REGION
+          - export AWS_ROLE_ARN=$AWS_ROLE_ARN
+          - export AWS_WEB_IDENTITY_TOKEN_FILE=$(pwd)/web-identity-token
+          - echo $BITBUCKET_STEP_OIDC_TOKEN > $(pwd)/web-identity-token
+          - aws s3 sync dist/ s3://www.enesyildirim.xyz/
 
 
 pipelines:
   branches:
     enes-dev:
       - step: *snyk-sec-test
-#      - step: *install-and-build
-#      - step: *deploy-to-s3
+      - step: *install-and-build
+      - step: *deploy-to-s3
 
 
 #definitions:
