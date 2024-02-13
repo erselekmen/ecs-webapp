@@ -45,7 +45,7 @@ definitions:
         services:
           - docker
         script:
-          - docker build -t $AWS_ECR_REPOSITORY:latest -t $AWS_ECR_REPOSITORY:$BITBUCKET_COMMIT .
+          - docker build -t $AWS_ECR_REPOSITORY:latest -t $BITBUCKET_COMMIT .
 
           - pipe: atlassian/aws-ecr-push-image:2.3.0
             oidc: true
