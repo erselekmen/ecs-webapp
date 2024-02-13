@@ -10,12 +10,10 @@ definitions:
           - snyk test --severity-threshold=low --org=erselekmen27 || true
 
     - step: &sonarqube-quality-test
-        image: maven:3.3.9
         name: SonarQube Code Quality Analysis
         caches:
           sonar: ~/.sonar
-        clone:
-          depth: full
+
         script:
           - pipe: sonarsource/sonarqube-scan:1.0.0
             variables:
