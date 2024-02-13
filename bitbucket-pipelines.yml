@@ -45,10 +45,8 @@ definitions:
         services:
           - docker
         script:
-          - echo "Building Docker image..."
           - docker build -t $AWS_ECR_REPOSITORY:latest -t $AWS_ECR_REPOSITORY:$BITBUCKET_COMMIT .
 
-          - echo "Pushing Docker image to ECR..."
           - pipe: atlassian/aws-ecr-push-image:2.3.0
             oidc: true
             variables:
