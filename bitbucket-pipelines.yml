@@ -17,9 +17,8 @@ definitions:
         script:
           - pipe: sonarsource/sonarqube-scan:1.0.0
             variables:
-              SONAR_HOST_URL: ${SQ_HOST_URL} # Get the value from the repository/workspace variable.
-              SONAR_TOKEN: ${SQ_TOKEN} # Get the value from the repository/workspace variable. You shouldn't set secret in clear text here.
-
+              SONAR_HOST_URL: ${SQ_HOST_URL}
+              SONAR_TOKEN: ${SQ_TOKEN}
 
     - step: &install-and-build
         name: Install Dependencies and Build
@@ -80,7 +79,7 @@ clone:
 
 pipelines:
   branches:
-    ersel-dev:
+    dev:
       - step: *snyk-sec-test
       - step: *sonarqube-quality-test
       - step: *install-and-build
