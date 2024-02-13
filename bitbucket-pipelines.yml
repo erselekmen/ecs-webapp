@@ -9,12 +9,18 @@ definitions:
           - snyk auth $SNYK_TOKEN
           - snyk test --severity-threshold=low --org=erselekmen27 || true
 
-#    - step: &sonarqube-quality-test
-#        name: SonarQube Code Quality Analysis
-#        image: sonarsource/sonar-scanner-cli:latest
-#        script:
-#          - sonar-scanner -Dsonar.projectKey=$SQ_PROJECT_KEY -Dsonar.host.url=$SQ_EC2_HOST:$SQ_EC2_PORT -Dsonar.login=$SQ_TOKEN
-
+    - step: &sonarqube-quality-test
+        name: SonarQube Code Quality Analysis
+        caches:
+          sonar: ~/.sonar
+        clone:
+          depth: full
+        image: maven:3.3.9
+        script:
+          - pipe: sonarsource/sonarqube-scan:1.0.0
+            variables:
+              SONAR_HOST_URL: ${SQ_HOST_URL} # Get the value from the repository/workspace variable.
+              SONAR_TOKEN: ${SQ_TOKEN} # Get the value from the repository/workspace variable. You shouldn't set secret in clear text here.
 
     - step: &install-and-build
         name: Install Dependencies and Build
@@ -38,7 +44,6 @@ definitions:
           - export AWS_WEB_IDENTITY_TOKEN_FILE=$(pwd)/web-identity-token
           - echo $BITBUCKET_STEP_OIDC_TOKEN > $(pwd)/web-identity-token
           - aws s3 sync dist/ s3://training-app-build/ --region eu-central-1
-
 
     - step: &build-and-deploy-ecs
         name: Build and Deploy to ECS
@@ -73,7 +78,7 @@ pipelines:
   branches:
     ersel-dev:
       - step: *snyk-sec-test
-#      - step: *sonarqube-quality-test
+      - step: *sonarqube-quality-test
       - step: *install-and-build
       - step: *deploy-to-s3
       - step: *build-and-deploy-ecs
