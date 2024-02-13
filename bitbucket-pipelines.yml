@@ -11,14 +11,15 @@ definitions:
 
     - step: &sonarqube-quality-test
         name: SonarQube Code Quality Analysis
-        caches:
-          sonar: ~/.sonar
 
+        clone:
+          depth: full
         script:
           - pipe: sonarsource/sonarqube-scan:1.0.0
             variables:
               SONAR_HOST_URL: ${SQ_HOST_URL} # Get the value from the repository/workspace variable.
               SONAR_TOKEN: ${SQ_TOKEN} # Get the value from the repository/workspace variable. You shouldn't set secret in clear text here.
+
 
     - step: &install-and-build
         name: Install Dependencies and Build
@@ -71,6 +72,11 @@ definitions:
               CLUSTER_NAME: $ECS_CLUSTER_NAME
               SERVICE_NAME: $ECS_SERVICE_NAME
 
+  caches:
+    sonar: ~/.sonar
+
+clone:
+  depth: full
 
 pipelines:
   branches:
