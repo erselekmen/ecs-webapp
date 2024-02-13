@@ -46,7 +46,7 @@ definitions:
           - docker
         script:
           - echo "$AWS_ECR_REPOSITORY:latest///$BITBUCKET_COMMIT"
-          - docker build -t $AWS_ECR_REPOSITORY:latest -t $BITBUCKET_COMMIT
+          - docker build -t $AWS_ECR_REPOSITORY:latest -t $BITBUCKET_COMMIT .
 
           - pipe: atlassian/aws-ecr-push-image:2.3.0
             oidc: true
