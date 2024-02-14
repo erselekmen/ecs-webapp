@@ -73,9 +73,10 @@ clone:
 
 pipelines:
   branches:
-    dev:
+    ersel-dev:
       - step: *snyk-sec-test
       - step: *sonarqube-quality-test
       - step: *install-and-build
       - step: *deploy-to-s3
       - step: *build-and-deploy-ecs
+
