@@ -50,22 +50,18 @@ definitions:
         script:
           - docker build -t $AWS_ECR_REPOSITORY:latest -t $BITBUCKET_COMMIT .
           - pipe: atlassian/aws-ecr-push-image:2.3.0
-            oidc: true
             variables:
               AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
               AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
               AWS_DEFAULT_REGION: $AWS_REGION
               IMAGE_NAME: $AWS_ECR_REPOSITORY
-              AWS_OIDC_ROLE_ARN: $AWS_ROLE_ARN # Optional
               TAG: 'latest, $BITBUCKET_COMMIT'
 
           - pipe: atlassian/aws-ecs-deploy:1.12.1
-            oidc: true
             variables:
               AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
               AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
               AWS_DEFAULT_REGION: $AWS_REGION
-              AWS_OIDC_ROLE_ARN: $AWS_ROLE_ARN # Optional
               CLUSTER_NAME: $ECS_CLUSTER_NAME
               SERVICE_NAME: $ECS_SERVICE_NAME
 
@@ -77,7 +73,7 @@ clone:
 
 pipelines:
   branches:
-    ersel-dev:
+    dev:
       - step: *snyk-sec-test
       - step: *sonarqube-quality-test
       - step: *install-and-build
