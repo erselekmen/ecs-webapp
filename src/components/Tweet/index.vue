@@ -84,7 +84,6 @@ export default {
 <template>
   <div id="tweet" v-show="isVideoMode">
     <img :src="userData.pictureUrl" />
-    <!-- https://100k-faces.glitch.me/random-image" class="avatar-image -->
     <div class="tweet-content">
       <div class="user-info">
         <p class="name">{{ userData.firstName + ' ' + userData.lastName }}</p>
