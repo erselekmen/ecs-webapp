@@ -77,7 +77,7 @@ clone:
 
 pipelines:
   branches:
-    dev:
+    ersel-dev:
       - step: *snyk-sec-test
       - step: *sonarqube-quality-test
       - step: *install-and-build
