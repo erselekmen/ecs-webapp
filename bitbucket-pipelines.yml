@@ -82,10 +82,10 @@ pipelines:
       - step: *snyk-sec-test
       - step: *sonarqube-quality-test
 
-    'ersel-dev':
+    'dev':
       - step: *npm-build
       - step: *deploy-build-to-s3
 
-    'dev':
+    'ersel-dev':
       - step: *build-image-to-ecr
       - step: *deploy-image-to-ecs
