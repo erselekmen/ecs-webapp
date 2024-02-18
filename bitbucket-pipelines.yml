@@ -78,14 +78,14 @@ clone:
 
 pipelines:
   branches:
-    '*':
+    parallel:
       - step: *snyk-sec-test
       - step: *sonarqube-quality-test
 
-    'dev':
+    dev:
       - step: *npm-build
       - step: *deploy-build-to-s3
 
-    'ersel-dev':
+    ersel-dev:
       - step: *build-image-to-ecr
       - step: *deploy-image-to-ecs
