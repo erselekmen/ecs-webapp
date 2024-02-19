@@ -77,11 +77,11 @@ clone:
 
 
 pipelines:
-  branches:
-    parallel:
-      - step: *snyk-sec-test
-      - step: *sonarqube-quality-test
+  parallel:
+    - step: *snyk-sec-test
+    - step: *sonarqube-quality-test
 
+  branches:
     dev:
       - step: *npm-build
       - step: *deploy-build-to-s3
@@ -89,3 +89,5 @@ pipelines:
     ersel-dev:
       - step: *build-image-to-ecr
       - step: *deploy-image-to-ecs
+
+
