@@ -48,7 +48,9 @@ definitions:
         services:
           - docker
         script:
-          - docker build -t public.ecr.aws/h1l7z7k8/training-app-ecr -t $BITBUCKET_COMMIT .
+          - docker build -t training-app-ecr .
+          - docker tag training-app-ecr:latest public.ecr.aws/h1l7z7k8/training-app-ecr:latest
+          - docker push public.ecr.aws/h1l7z7k8/training-app-ecr:latest
           - pipe: atlassian/aws-ecr-push-image:2.3.0
             variables:
               AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
