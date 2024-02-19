@@ -77,7 +77,7 @@ clone:
 
 
 pipelines:
-  steps:
+  default:
     - step: *snyk-sec-test
     - step: *sonarqube-quality-test
 
