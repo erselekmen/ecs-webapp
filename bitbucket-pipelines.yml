@@ -77,7 +77,7 @@ clone:
 
 
 pipelines:
-  parallel:
+  steps:
     - step: *snyk-sec-test
     - step: *sonarqube-quality-test
 
