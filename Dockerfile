@@ -1,5 +1,5 @@
 # After the build step
-FROM node:20
+FROM node:20  as build-stage
 
 # Install a server to serve the static files
 RUN npm install -g serve
