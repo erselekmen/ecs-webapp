@@ -88,7 +88,7 @@ pipelines:
       - step: *npm-build
       - step: *deploy-build-to-s3
 
-    ersel-dev:
+    training-app_v2:
 #      - step: *snyk-sec-test
 #      - step: *sonarqube-quality-test
       - step: *build-image-to-ecr
