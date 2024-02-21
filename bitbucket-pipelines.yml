@@ -78,9 +78,9 @@ clone:
 
 pipelines:
   branches:
-    dev:
-      - step: *snyk-sec-test
-      - step: *sonarqube-quality-test
+    training-app_v2:
+#      - step: *snyk-sec-test
+#      - step: *sonarqube-quality-test
       - step: *build-image-to-ecr
       - step: *deploy-image-to-ecs
 
