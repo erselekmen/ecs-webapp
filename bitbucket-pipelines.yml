@@ -40,7 +40,7 @@ definitions:
           - export AWS_ROLE_ARN=$AWS_ROLE_ARN
           - export AWS_WEB_IDENTITY_TOKEN_FILE=$(pwd)/web-identity-token
           - echo $BITBUCKET_STEP_OIDC_TOKEN > $(pwd)/web-identity-token
-          - aws s3 sync dist/ s3://training-app-build/ --region eu-central-1
+          - aws s3 sync dist/ s3://erselekmen.com/ --region eu-central-1
 
     - step: &build-image-to-ecr
         name: Build Docker Image and Push to ECR
@@ -92,6 +92,7 @@ pipelines:
     training-app_v2:
 #      - step: *snyk-sec-test
 #      - step: *sonarqube-quality-test
+      - step: *deploy-build-to-s3
       - step: *build-image-to-ecr
       - step: *deploy-image-to-ecs
 
