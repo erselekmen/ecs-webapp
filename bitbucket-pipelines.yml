@@ -61,13 +61,14 @@ definitions:
         name: Deploy to ECS
         image: atlassian/pipelines-awscli
         script:
-          - pipe: atlassian/aws-ecs-deploy:1.12.1
+          - pipe: atlassian/aws-ecs-deploy
             variables:
               AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
               AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
               AWS_DEFAULT_REGION: $AWS_REGION
               CLUSTER_NAME: $ECS_CLUSTER_NAME
               SERVICE_NAME: $ECS_SERVICE_NAME
+              IMAGE_NAME: "$AWS_ECR_REPOSITORY:$BITBUCKET_COMMIT"
 
   caches:
     sonar: ~/.sonar
