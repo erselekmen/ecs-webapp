@@ -81,60 +81,46 @@ pipelines:
   default:
     - step:
         <<: *snyk-sec-test
-        deployment: snyk-test
     - step:
         <<: *sonarqube-quality-test
-        deployment: sonarqube-test
 
   branches:
     ersel-dev:
       - parallel:
           - step:
               <<: *npm-build
-              deployment: build-app-dev-s3
           - step:
               <<: *build-image-to-ecr
-              deployment: build-app-dev-ecr
 
       - parallel:
           - step:
               <<: *deploy-build-to-s3
-              deployment: deploy-dev-s3
           - step:
               <<: *deploy-image-to-ecs
-              deployment: deploy-dev-ecs
 
     dev:
       - parallel:
           - step:
               <<: *npm-build
-              deployment: build-app-dev-s3
           - step:
               <<: *build-image-to-ecr
-              deployment: build-app-dev-ecr
 
       - parallel:
           - step:
               <<: *deploy-build-to-s3
-              deployment: deploy-dev-s3
           - step:
               <<: *deploy-image-to-ecs
-              deployment: deploy-dev-ecs
 
     master:
       - parallel:
           - step:
               <<: *npm-build
-              deployment: build-app-prod-s3
           - step:
               <<: *build-image-to-ecr
-              deployment: build-app-prod-ecr
 
       - parallel:
           - step:
               <<: *deploy-build-to-s3
-              deployment: deploy-prod-s3
           - step:
               <<: *deploy-image-to-ecs
-              deployment: deploy-prod-ecs
 
