@@ -40,7 +40,7 @@ definitions:
           - export AWS_ROLE_ARN=$AWS_ROLE_ARN
           - export AWS_WEB_IDENTITY_TOKEN_FILE=$(pwd)/web-identity-token
           - echo $BITBUCKET_STEP_OIDC_TOKEN > $(pwd)/web-identity-token
-          - aws s3 sync dist/ s3://training-app-build/ --region eu-central-1
+          - aws s3 sync dist/ s3://s3.erselekmen.com/ --region eu-central-1
 
     - step: &build-image-to-ecr
         name: Build Docker Image and Push to ECR
@@ -68,6 +68,7 @@ definitions:
               AWS_DEFAULT_REGION: $AWS_REGION
               CLUSTER_NAME: $ECS_CLUSTER_NAME
               SERVICE_NAME: $ECS_SERVICE_NAME
+              IMAGE_NAME: "$AWS_ECR_REPOSITORY:$BITBUCKET_COMMIT"
 
   caches:
     sonar: ~/.sonar
@@ -78,20 +79,48 @@ clone:
 
 pipelines:
   default:
-    - step: *snyk-sec-test
-    - step: *sonarqube-quality-test
+    - step:
+        <<: *snyk-sec-test
+    - step:
+        <<: *sonarqube-quality-test
 
   branches:
-    dev:
-      - step: *snyk-sec-test
-      - step: *sonarqube-quality-test
-      - step: *npm-build
-      - step: *deploy-build-to-s3
-
     ersel-dev:
-#      - step: *snyk-sec-test
-#      - step: *sonarqube-quality-test
-      - step: *build-image-to-ecr
-      - step: *deploy-image-to-ecs
+      - parallel:
+          - step:
+              <<: *npm-build
+          - step:
+              <<: *build-image-to-ecr
 
+      - parallel:
+          - step:
+              <<: *deploy-build-to-s3
+          - step:
+              <<: *deploy-image-to-ecs
+
+    dev:
+      - parallel:
+          - step:
+              <<: *npm-build
+          - step:
+              <<: *build-image-to-ecr
+
+      - parallel:
+          - step:
+              <<: *deploy-build-to-s3
+          - step:
+              <<: *deploy-image-to-ecs
+
+    master:
+      - parallel:
+          - step:
+              <<: *npm-build
+          - step:
+              <<: *build-image-to-ecr
+
+      - parallel:
+          - step:
+              <<: *deploy-build-to-s3
+          - step:
+              <<: *deploy-image-to-ecs
 
