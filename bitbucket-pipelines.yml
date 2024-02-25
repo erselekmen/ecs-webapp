@@ -86,6 +86,10 @@ pipelines:
 
   branches:
     ersel-dev:
+      - step:
+          <<: *snyk-sec-test
+      - step:
+          <<: *sonarqube-quality-test
       - parallel:
           - step:
               <<: *npm-build
