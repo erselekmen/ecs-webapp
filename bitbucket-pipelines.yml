@@ -108,7 +108,6 @@ pipelines:
       - parallel:
           - step:
               <<: *npm-build
-              deployment: dev-env
           - step:
               <<: *build-image-to-ecr
               deployment: dev-env
@@ -116,7 +115,6 @@ pipelines:
       - parallel:
           - step:
               <<: *deploy-build-to-s3
-              deployment: dev-env
           - step:
               <<: *deploy-image-to-ecs
               deployment: dev-env
@@ -128,7 +126,6 @@ pipelines:
       - parallel:
           - step:
               <<: *npm-build
-              deployment: prod-env
           - step:
               <<: *build-image-to-ecr
               deployment: prod-env
@@ -136,7 +133,6 @@ pipelines:
       - parallel:
           - step:
               <<: *deploy-build-to-s3
-              deployment: prod-env
           - step:
               <<: *deploy-image-to-ecs
               deployment: prod-env
