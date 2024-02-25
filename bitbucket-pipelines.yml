@@ -78,17 +78,65 @@ clone:
 
 
 pipelines:
-  branches:
-    dev:
-      - step: *snyk-sec-test
-      - step: *sonarqube-quality-test
-      - step: *npm-build
-      - step: *deploy-build-to-s3
+  default:
+    - step:
+        <<: *snyk-sec-test
+    - step:
+        <<: *sonarqube-quality-test
 
+  branches:
     ersel-dev:
       - step: *snyk-sec-test
       - step: *sonarqube-quality-test
-      - step: *npm-build
-      - step: *deploy-build-to-s3
-      - step: *build-image-to-ecr
-      - step: *deploy-image-to-ecs
+
+      - parallel:
+          - step:
+              <<: *npm-build
+          - step:
+              <<: *build-image-to-ecr
+
+      - parallel:
+          - step:
+              <<: *deploy-build-to-s3
+          - step:
+              <<: *deploy-image-to-ecs
+
+    dev:
+      - step: *snyk-sec-test
+      - step: *sonarqube-quality-test
+
+      - parallel:
+          - step:
+              <<: *npm-build
+              deployment: dev-env
+          - step:
+              <<: *build-image-to-ecr
+              deployment: dev-env
+
+      - parallel:
+          - step:
+              <<: *deploy-build-to-s3
+              deployment: dev-env
+          - step:
+              <<: *deploy-image-to-ecs
+              deployment: dev-env
+
+    master:
+      - step: *snyk-sec-test
+      - step: *sonarqube-quality-test
+
+      - parallel:
+          - step:
+              <<: *npm-build
+              deployment: prod-env
+          - step:
+              <<: *build-image-to-ecr
+              deployment: prod-env
+
+      - parallel:
+          - step:
+              <<: *deploy-build-to-s3
+              deployment: prod-env
+          - step:
+              <<: *deploy-image-to-ecs
+              deployment: prod-env
