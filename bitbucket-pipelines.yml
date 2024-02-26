@@ -69,7 +69,7 @@ definitions:
               CLUSTER_NAME: $ECS_CLUSTER_NAME
               SERVICE_NAME: $ECS_SERVICE_NAME
               IMAGE_NAME: "$AWS_ECR_REPOSITORY:$BITBUCKET_COMMIT"
-          - aws ecs update-service --cluster $ECS_CLUSTER_NAME --service $ECS_SERVICE_NAME --force-new-deployment
+          - aws ecs update-service --cluster $ECS_CLUSTER_NAME --service $ECS_SERVICE_NAME --force-new-deployment --region $AWS_DEFAULT_REGION
 
   caches:
     sonar: ~/.sonar
