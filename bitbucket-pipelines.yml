@@ -132,3 +132,4 @@ pipelines:
               <<: *deploy-build-to-s3
           - step:
               <<: *deploy-image-to-ecs
+
