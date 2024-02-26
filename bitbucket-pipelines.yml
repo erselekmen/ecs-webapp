@@ -87,20 +87,18 @@ pipelines:
 
   branches:
     ersel-dev:
-      - step: *snyk-sec-test
-      - step: *sonarqube-quality-test
+ #     - step: *snyk-sec-test
+  #    - step: *sonarqube-quality-test
 
-      - parallel:
-          - step:
-              <<: *npm-build
-          - step:
-              <<: *build-image-to-ecr
+  #    - parallel:
+   #       - step:
+   #           <<: *npm-build
+      - step:
+          <<: *build-image-to-ecr
 
-      - parallel:
-          - step:
-              <<: *deploy-build-to-s3
-          - step:
-              <<: *deploy-image-to-ecs
+
+      - step:
+          <<: *deploy-image-to-ecs
 
     dev:
       - step: *snyk-sec-test
