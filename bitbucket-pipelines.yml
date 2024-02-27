@@ -31,7 +31,7 @@ definitions:
           - dist/**
 
     - step: &deploy-build-to-s3
-        name: Install aws-cli and Deploy to AWS S3
+        name: Deploy Build to AWS S3
         oidc: true
         script:
           - apt-get update
@@ -43,7 +43,7 @@ definitions:
           - aws s3 sync dist/ s3://s3.erselekmen.com/ --region eu-central-1
 
     - step: &build-image-to-ecr
-        name: Build Docker Image and Push to ECR
+        name: Push Image to ECR
         image: atlassian/pipelines-awscli
         services:
           - docker
