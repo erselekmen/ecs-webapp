@@ -41,7 +41,7 @@ definitions:
           - export AWS_ROLE_ARN=$AWS_ROLE_ARN
           - export AWS_WEB_IDENTITY_TOKEN_FILE=$(pwd)/web-identity-token
           - echo $BITBUCKET_STEP_OIDC_TOKEN > $(pwd)/web-identity-token
-          - aws s3 sync dist/ s3://s3.erselekmen.com/ --region eu-central-1
+          - aws s3 sync dist/ $AWS_S3_BUCKET --region $AWS_REGION
 
     - step: &build-image-to-ecr
         name: Push Image to ECR
