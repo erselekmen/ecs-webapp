@@ -10,6 +10,7 @@ COPY . .
 
 RUN npm run build
 
+RUN sed -i 's/<title>.*<\/title>/<title>Training App | ECS<\/title>/' dist/index.html
 
 FROM nginx:stable-alpine as production-stage
 

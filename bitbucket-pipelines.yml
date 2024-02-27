@@ -27,6 +27,7 @@ definitions:
           - npm install
           - npm install -g @vue/cli
           - npm run build
+          - sed -i 's/<title>.*<\/title>/<title>Training App | S3<\/title>/' dist/index.html
         artifacts:
           - dist/**
 
