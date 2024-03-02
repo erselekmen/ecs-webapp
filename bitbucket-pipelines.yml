@@ -87,7 +87,7 @@ pipelines:
         <<: *sonarqube-quality-test
 
   branches:
-    ersel-dev:
+    dev:
       - step: *snyk-sec-test
       - step: *sonarqube-quality-test
 
