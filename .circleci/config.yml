@@ -90,10 +90,7 @@ jobs:
           name: Build Docker Image
           command: |
             docker build -t training-app-ecr:latest .
-      - aws-ecr/ecr_login:
-          aws-access-key-id: AWS_ACCESS_KEY_ID
-          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          region: AWS_REGION
+      - aws-ecr/ecr-login:
       - run:
           name: Push Docker Image to ECR
           command: |
