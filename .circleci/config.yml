@@ -38,13 +38,13 @@ jobs:
             - node-v1-
       - run:
           name: Install Dependencies
-          command: npm install
+          command: sudo npm install
       - run:
           name: Install Vue CLI Globally
-          command: npm install -g @vue/cli
+          command: sudo npm install -g @vue/cli
       - run:
           name: Build the Project
-          command: npm run build
+          command: sudo npm run build
       - run:
           name: Update Title in index.html
           command: sed -i 's/<title>.*<\/title>/<title>Training App | S3<\/title>/' dist/index.html
