@@ -90,7 +90,7 @@ jobs:
           name: Build Docker Image
           command: |
             docker build -t $AWS_ECR_REPOSITORY:$IMAGE_TAG -t $AWS_ECR_REPOSITORY:$CIRCLE_SHA1 .
-      - aws-ecr/login:
+      - aws-ecr/ecr-login:
           region: $AWS_REGION
       - run:
           name: Push Docker Image to ECR
