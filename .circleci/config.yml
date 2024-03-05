@@ -77,7 +77,7 @@ jobs:
 
   build-image-to-ecr:
     docker:
-      - image: cimg/base:stable
+      - image: cimg/aws:2023.12
     environment:
       AWS_REGION: $AWS_REGION
       AWS_ECR_REPOSITORY: $AWS_ECR_REPOSITORY
