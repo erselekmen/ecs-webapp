@@ -56,7 +56,7 @@ jobs:
           root: .  # This is the directory where all the job's steps are run
           paths:
             - /tmp/workspace/dist/  # This is the directory you want to persist
-            -
+
 deploy-build-to-s3:
   docker:
     - image: cimg/base:stable
