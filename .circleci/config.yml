@@ -59,14 +59,21 @@ jobs:
 
   deploy-build-to-s3:
     docker:
-      - image: circleci/aws-cli@2.0.3
+      - image: cimg/base:stable
     steps:
       - checkout
       - aws-cli/setup
       - run:
           name: Deploy Build to AWS S3
           command: |
+            sudo apt-get update
+            sudo apt-get install -y awscli
+            echo $BITBUCKET_STEP_OIDC_TOKEN > $(pwd)/web-identity-token
+            export AWS_REGION=$AWS_REGION
+            export AWS_ROLE_ARN=$AWS_ROLE_ARN
+            export AWS_WEB_IDENTITY_TOKEN_FILE=$(pwd)/web-identity-token
             aws s3 sync dist/ $AWS_S3_BUCKET --region $AWS_REGION
+
 
   build-image-to-ecr:
     docker:
