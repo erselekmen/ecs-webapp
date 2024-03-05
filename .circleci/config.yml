@@ -79,8 +79,8 @@ jobs:
     docker:
       - image: cimg/aws-cli:2.0.56  # You can use the latest aws-cli image
     environment:
-      AWS_REGION: your-region  # Set your AWS region here
-      AWS_ECR_REPOSITORY: your-repo-name  # Set your ECR repository name here
+      AWS_REGION: $AWS_REGION  # Set your AWS region here
+      AWS_ECR_REPOSITORY: $AWS_ECR_REPOSITORY  # Set your ECR repository name here
       IMAGE_TAG: latest  # Set your image tag here, if it's not just 'latest'
     steps:
       - checkout
