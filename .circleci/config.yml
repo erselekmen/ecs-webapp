@@ -79,8 +79,8 @@ jobs:
     docker:
       - image: cimg/aws:2023.12
     environment:
-      AWS_REGION: $AWS_REGION
-      AWS_ECR_REPOSITORY: $AWS_ECR_REPOSITORY
+      AWS_REGION: AWS_REGION
+      AWS_ECR_REPOSITORY: AWS_ECR_REPOSITORY
       IMAGE_TAG: latest
     steps:
       - checkout
@@ -97,8 +97,8 @@ jobs:
       - run:
           name: Push Docker Image to ECR
           command: |
-            docker push $AWS_ECR_REPOSITORY:$IMAGE_TAG
-            docker push $AWS_ECR_REPOSITORY:$CIRCLE_SHA1
+            docker push AWS_ECR_REPOSITORY:IMAGE_TAG
+            docker push AWS_ECR_REPOSITORY:CIRCLE_SHA1
 
   deploy-image-to-ecs:
     docker:
