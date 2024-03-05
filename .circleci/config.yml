@@ -47,7 +47,7 @@ jobs:
           command: sudo npm run build
       - run:
           name: Update Title in index.html
-          command: sed -i 's/<title>.*<\/title>/<title>Training App | S3<\/title>/' dist/index.html
+          command: sudo sed -i 's/<title>.*<\/title>/<title>Training App | S3<\/title>/' dist/index.html
       - save_cache:  # save cache for faster future builds
           key: node-v1-{{ .Branch }}-{{ checksum "package.json" }}
           paths:
