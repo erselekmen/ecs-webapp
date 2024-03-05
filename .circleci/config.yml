@@ -28,10 +28,10 @@ jobs:
 
   npm-build:
     docker:
-      - image: cimg/node:20.0  # Replace with the version of Node.js you are using
+      - image: cimg/node:20.0
     steps:
       - checkout
-      - restore_cache:  # restores saved cache if no changes in package.json
+      - restore_cache:
           keys:
             - node-v1-{{ .Branch }}-{{ checksum "package.json" }}
             - node-v1-{{ .Branch }}-
@@ -48,20 +48,20 @@ jobs:
       - run:
           name: Update Title in index.html
           command: sudo sed -i 's/<title>.*<\/title>/<title>Training App | S3<\/title>/' dist/index.html
-      - save_cache:  # save cache for faster future builds
+      - save_cache:
           key: node-v1-{{ .Branch }}-{{ checksum "package.json" }}
           paths:
             - node_modules
       - persist_to_workspace:
-          root: .  # This is the directory where all the job's steps are run
+          root: .
           paths:
-            - dist  # This is the directory you want to persist
+            - dist
 
   deploy-build-to-s3:
     docker:
       - image: cimg/base:stable
     steps:
-      - attach_workspace:  # This step is required to access the dist/ directory
+      - attach_workspace:
           at: /tmp/workspace
       - aws-cli/setup
       - run:
@@ -77,11 +77,11 @@ jobs:
 
   build-image-to-ecr:
     docker:
-      - image: cimg/aws-cli:2.0.56  # You can use the latest aws-cli image
+      - image: cimg/base:stable
     environment:
-      AWS_REGION: $AWS_REGION  # Set your AWS region here
-      AWS_ECR_REPOSITORY: $AWS_ECR_REPOSITORY  # Set your ECR repository name here
-      IMAGE_TAG: latest  # Set your image tag here, if it's not just 'latest'
+      AWS_REGION: $AWS_REGION
+      AWS_ECR_REPOSITORY: $AWS_ECR_REPOSITORY
+      IMAGE_TAG: latest
     steps:
       - checkout
       - setup_remote_docker:
@@ -93,7 +93,7 @@ jobs:
       - aws-ecr/ecr-login:
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          region: AWS_REGION  # This should be the name of the env var, not its value
+          region: AWS_REGION
       - run:
           name: Push Docker Image to ECR
           command: |
