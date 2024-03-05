@@ -77,16 +77,25 @@ jobs:
 
   build-image-to-ecr:
     docker:
-      - image: circleci/aws-cli@2.0.3
+      - image: cimg/aws-cli:2.0.56  # You can use the latest aws-cli image
+    environment:
+      AWS_REGION: your-region  # Set your AWS region here
+      AWS_ECR_REPOSITORY: your-repo-name  # Set your ECR repository name here
+      IMAGE_TAG: latest  # Set your image tag here, if it's not just 'latest'
     steps:
       - checkout
-      - setup_remote_docker
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run:
-          name: Build and Push Docker Image to ECR
+          name: Build Docker Image
           command: |
-            $(aws ecr get-login --no-include-email --region $AWS_REGION)
-            docker build -t $AWS_ECR_REPOSITORY:latest -t $AWS_ECR_REPOSITORY:$CIRCLE_SHA1 .
-            docker push $AWS_ECR_REPOSITORY:latest
+            docker build -t $AWS_ECR_REPOSITORY:$IMAGE_TAG -t $AWS_ECR_REPOSITORY:$CIRCLE_SHA1 .
+      - aws-ecr/login:
+          region: $AWS_REGION
+      - run:
+          name: Push Docker Image to ECR
+          command: |
+            docker push $AWS_ECR_REPOSITORY:$IMAGE_TAG
             docker push $AWS_ECR_REPOSITORY:$CIRCLE_SHA1
 
   deploy-image-to-ecs:
