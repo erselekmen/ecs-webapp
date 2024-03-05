@@ -55,25 +55,25 @@ jobs:
       - persist_to_workspace:
           root: .  # This is the directory where all the job's steps are run
           paths:
-            - dist  # This is the directory you want to persist
-
-  deploy-build-to-s3:
-    docker:
-      - image: cimg/base:stable
-    steps:
-      - checkout
-      - aws-cli/setup
-      - run:
-          name: Deploy Build to AWS S3
-          command: |
-            sudo apt-get update
-            sudo apt-get install -y awscli
-            echo $BITBUCKET_STEP_OIDC_TOKEN > $(pwd)/web-identity-token
-            export AWS_REGION=$AWS_REGION
-            export AWS_ROLE_ARN=$AWS_ROLE_ARN
-            export AWS_WEB_IDENTITY_TOKEN_FILE=$(pwd)/web-identity-token
-            aws s3 sync dist/ $AWS_S3_BUCKET --region $AWS_REGION
-
+            - /tmp/workspace/dist/  # This is the directory you want to persist
+            -
+deploy-build-to-s3:
+  docker:
+    - image: cimg/base:stable
+  steps:
+    - attach_workspace:  # This step is required to access the dist/ directory
+        at: /tmp/workspace
+    - aws-cli/setup
+    - run:
+        name: Deploy Build to AWS S3
+        command: |
+          sudo apt-get update
+          sudo apt-get install -y awscli
+          echo $BITBUCKET_STEP_OIDC_TOKEN > /tmp/workspace/web-identity-token
+          export AWS_REGION=$AWS_REGION
+          export AWS_ROLE_ARN=$AWS_ROLE_ARN
+          export AWS_WEB_IDENTITY_TOKEN_FILE=/tmp/workspace/web-identity-token
+          aws s3 sync /tmp/workspace/dist/ $AWS_S3_BUCKET --region $AWS_REGION
 
   build-image-to-ecr:
     docker:
