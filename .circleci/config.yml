@@ -90,7 +90,6 @@ jobs:
           name: Build Docker Image
           command: |
             docker build -t training-app-ecr:latest .
-      - aws-ecr/ecr-login:
       - run:
           name: Push Docker Image to ECR
           command: |
