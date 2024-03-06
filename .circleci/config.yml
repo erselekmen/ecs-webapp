@@ -94,7 +94,7 @@ jobs:
           name: Push Docker Image to ECR
           command: |
             docker push 110975517810.dkr.ecr.eu-central-1.amazonaws.com/training-app-ecr:latest
-            docker push 110975517810.dkr.ecr.eu-central-1.amazonaws.com/training-app-ecr:$CIRCLE_SHA1
+        #    docker push 110975517810.dkr.ecr.eu-central-1.amazonaws.com/training-app-ecr:$CIRCLE_SHA1
 
   deploy-image-to-ecs:
     docker:
