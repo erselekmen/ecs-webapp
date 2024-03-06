@@ -90,7 +90,7 @@ jobs:
           name: Build Docker Image
           command: |
             docker build -t training-app-ecr:latest .
-      - deploy-ecr:
+      - run:
           command: |
             docker push training-app-ecr:$IMAGE_TAG
             docker push training-app-ecr:$CIRCLE_SHA1
