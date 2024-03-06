@@ -77,12 +77,13 @@ jobs:
 
 
   aws-ecr/build-and-push-image:
+    name: build_and_push_to_ecr
     context: aws-dev
     create-repo: true
     dockerfile: Dockerfile
     path: .
     repo: training-app-ecr
-    tag: "$CIRCLE_SHA1"
+    tag: "${CIRCLE_SHA1}"
 
   deploy-image-to-ecs:
     docker:
