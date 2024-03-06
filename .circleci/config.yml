@@ -76,13 +76,13 @@ jobs:
             aws s3 sync /tmp/workspace/dist/ $AWS_S3_BUCKET --region $AWS_REGION
 
 
-aws-ecr/build-and-push-image:
-  context: aws-dev
-  create-repo: true
-  dockerfile: Dockerfile
-  path: .
-  repo: training-app-ecr
-  tag: "$CIRCLE_SHA1"
+  aws-ecr/build-and-push-image:
+    context: aws-dev
+    create-repo: true
+    dockerfile: Dockerfile
+    path: .
+    repo: training-app-ecr
+    tag: "$CIRCLE_SHA1"
 
   deploy-image-to-ecs:
     docker:
