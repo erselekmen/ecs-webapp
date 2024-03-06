@@ -75,17 +75,17 @@ jobs:
             export AWS_WEB_IDENTITY_TOKEN_FILE=/tmp/workspace/web-identity-token
             aws s3 sync /tmp/workspace/dist/ $AWS_S3_BUCKET --region $AWS_REGION
 
-
-  aws-ecr/build-and-push-image:
-    name: build_and_push_to_ecr
-    account-url: AWS_ECR_ACCOUNT_URL  # Make sure to replace with your actual ECR account URL
-    repo: training-app-ecr
-    region: AWS_REGION  # Ensure AWS_REGION is set in your CircleCI project's environment variables
-    tag: "${CIRCLE_SHA1}"  # Use CircleCI's built-in environment variable for commit SHA
-    dockerfile: Dockerfile
-    path: .
-    create-repo: true
-
+  build-image-to-ecr:
+    executor: aws-ecr/default
+    steps:
+      - checkout
+      - aws-ecr/build-and-push-image:
+          account-url: AWS_ECR_ACCOUNT_URL  # Replace with your AWS account URL
+          repo: AWS_ECR_REPOSITORY  # Replace with your ECR repository name
+          region: AWS_REGION  # Replace with your AWS region
+          tag: 'latest-${CIRCLE_SHA1}'  # Example tag, customize as needed
+          dockerfile: Dockerfile  # Specify the path to your Dockerfile if not at the root
+          path: .  # Specify the build context path if your Dockerfile isn't in the root directory
 
   deploy-image-to-ecs:
     docker:
@@ -100,8 +100,6 @@ jobs:
 workflows:
   version: 2
   build-and-deploy:
-    context: aws-dev  # Contexts are referenced at the workflow level, not in the job
-
     jobs:
       - snyk-security-test
       # - sonarqube-quality-test
@@ -109,7 +107,7 @@ workflows:
           filters:
             branches:
               only: [ersel-dev, dev, master]
-      - aws-ecr/build-and-push-image:
+      - build-image-to-ecr:
           filters:
             branches:
               only: [ersel-dev, dev, master]
