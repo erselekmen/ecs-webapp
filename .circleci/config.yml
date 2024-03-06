@@ -89,8 +89,7 @@ jobs:
 
 
   deploy-image-to-ecs:
-    docker:
-      - image: circleci/aws-cli@2.0.3
+    executor: aws-ecs/default
     steps:
       - checkout
       - run:
