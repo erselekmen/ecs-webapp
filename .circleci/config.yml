@@ -78,12 +78,14 @@ jobs:
 
   aws-ecr/build-and-push-image:
     name: build_and_push_to_ecr
-    context: aws-dev
-    create-repo: true
+    account-url: AWS_ECR_ACCOUNT_URL  # Make sure to replace with your actual ECR account URL
+    repo: training-app-ecr
+    region: AWS_REGION  # Ensure AWS_REGION is set in your CircleCI project's environment variables
+    tag: "${CIRCLE_SHA1}"  # Use CircleCI's built-in environment variable for commit SHA
     dockerfile: Dockerfile
     path: .
-    repo: training-app-ecr
-    tag: "${CIRCLE_SHA1}"
+    create-repo: true
+
 
   deploy-image-to-ecs:
     docker:
@@ -98,6 +100,8 @@ jobs:
 workflows:
   version: 2
   build-and-deploy:
+    context: aws-dev  # Contexts are referenced at the workflow level, not in the job
+
     jobs:
       - snyk-security-test
       # - sonarqube-quality-test
