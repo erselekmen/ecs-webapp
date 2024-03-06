@@ -91,7 +91,6 @@ jobs:
           command: |
             docker build -t training-app-ecr:latest .
       - aws-ecr/build-and-push-image:
-          context: aws-dev
           create-repo: true
           dockerfile: Dockerfile
           path: .
