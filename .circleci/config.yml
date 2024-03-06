@@ -81,9 +81,9 @@ jobs:
       - checkout
       - aws-ecr/build-and-push-image:
           account-url: AWS_ECR_ACCOUNT_URL  # Replace with your AWS account URL
-          repo: AWS_ECR_REPOSITORY  # Replace with your ECR repository name
+          repo: training-app-ecr  # Replace with your ECR repository name
           region: AWS_REGION  # Replace with your AWS region
-          tag: 'latest-${CIRCLE_SHA1}'  # Example tag, customize as needed
+          tag: 'latest'  # Example tag, customize as needed
           dockerfile: Dockerfile  # Specify the path to your Dockerfile if not at the root
           path: .  # Specify the build context path if your Dockerfile isn't in the root directory
 
