@@ -104,7 +104,7 @@ workflows:
           filters:
             branches:
               only: [ersel-dev, dev, master]
-      - build-image-to-ecr:
+      - aws-ecr/build-and-push-image:
           filters:
             branches:
               only: [ersel-dev, dev, master]
