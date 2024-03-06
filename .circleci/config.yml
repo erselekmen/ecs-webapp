@@ -89,12 +89,14 @@ jobs:
       - run:
           name: Build Docker Image
           command: |
-            docker build -t 110975517810.dkr.ecr.eu-central-1.amazonaws.com:latest .
-      - run:
-          name: Push Docker Image to ECR
-          command: |
-            docker push 110975517810.dkr.ecr.eu-central-1.amazonaws.com/training-app-ecr:latest
-        #    docker push 110975517810.dkr.ecr.eu-central-1.amazonaws.com/training-app-ecr:$CIRCLE_SHA1
+            docker build -t training-app-ecr:latest .
+      - aws-ecr/build-and-push-image:
+          context: aws-dev
+          create-repo: true
+          dockerfile: Dockerfile
+          path: .
+          repo: training-app-ecr
+          tag: "$CIRCLE_SHA1"
 
   deploy-image-to-ecs:
     docker:
