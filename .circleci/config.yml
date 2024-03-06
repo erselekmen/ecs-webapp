@@ -76,8 +76,8 @@ jobs:
             aws s3 sync /tmp/workspace/dist/ $AWS_S3_BUCKET --region $AWS_REGION
 
 
-  aws-ecr/build-and-push-image:
-   # context: aws-dev
+  build-image-to-ecr:
+    # context: aws-dev
     create-repo: true
     dockerfile: Dockerfile
     path: .
