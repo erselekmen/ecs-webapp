@@ -90,12 +90,10 @@ jobs:
           name: Build Docker Image
           command: |
             docker build -t training-app-ecr:latest .
-      - aws-ecr/build-and-push-image:
-          create-repo: true
-          dockerfile: Dockerfile
-          path: .
-          repo: training-app-ecr
-          tag: "$CIRCLE_SHA1"
+      - deploy-ecr:
+          command: |
+            docker push training-app-ecr:$IMAGE_TAG
+            docker push training-app-ecr:$CIRCLE_SHA1
 
   deploy-image-to-ecs:
     docker:
