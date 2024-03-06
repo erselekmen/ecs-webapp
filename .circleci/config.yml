@@ -87,6 +87,7 @@ jobs:
           dockerfile: Dockerfile  # Specify the path to your Dockerfile if not at the root
           path: .  # Specify the build context path if your Dockerfile isn't in the root directory
 
+
   deploy-image-to-ecs:
     docker:
       - image: circleci/aws-cli@2.0.3
