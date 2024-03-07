@@ -90,7 +90,7 @@ jobs:
 
   deploy-to-eks:
     docker:
-      - image: circleci/aws-cli:2.0.3
+      - image: cimg/base:stable
     steps:
       - checkout
       - aws-cli/setup
