@@ -95,13 +95,24 @@ jobs:
       - checkout
       - aws-cli/setup
       - run:
+          name: Install kubectl
+          command: |
+            # Download the latest release of kubectl
+            curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+            # Make the kubectl binary executable
+            chmod +x ./kubectl
+            # Move the binary in to your PATH
+            sudo mv ./kubectl /usr/local/bin/kubectl
+      - run:
           name: Set up kubeconfig
           command: |
             aws eks --region $AWS_REGION update-kubeconfig --name $EKS_CLUSTER_NAME
       - run:
           name: Deploy to EKS
           command: |
+            # Now that kubectl is installed, we can use it to update the deployment
             kubectl set image 110975517810.dkr.ecr.eu-central-1.amazonaws.com/training-app-ecr container_name=${AWS_ECR_ACCOUNT_URL}/training-app-ecr:${CIRCLE_SHA1} --record
+            
 
 workflows:
   version: 2
