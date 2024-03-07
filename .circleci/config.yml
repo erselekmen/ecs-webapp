@@ -88,14 +88,20 @@ jobs:
           path: .  # Specify the build context path if your Dockerfile isn't in the root directory
 
 
-  deploy-image-to-ecs:
-    executor: aws-ecs/default
+  deploy-to-eks:
+    docker:
+      - image: circleci/aws-cli:2.0.3
     steps:
       - checkout
+      - aws-cli/setup
       - run:
-          name: Update ECS Service
+          name: Set up kubeconfig
           command: |
-            aws ecs update-service --cluster $ECS_CLUSTER_NAME --service $ECS_SERVICE_NAME --force-new-deployment --task-definition $TASK_DEFINITION
+            aws eks --region $AWS_REGION update-kubeconfig --name $EKS_CLUSTER_NAME
+      - run:
+          name: Deploy to EKS
+          command: |
+            kubectl set image 110975517810.dkr.ecr.eu-central-1.amazonaws.com/training-app-ecr container_name=${AWS_ECR_ACCOUNT_URL}/training-app-ecr:${CIRCLE_SHA1} --record
 
 workflows:
   version: 2
