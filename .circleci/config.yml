@@ -123,9 +123,9 @@ workflows:
           filters:
             branches:
               only: [ersel-dev, dev, master]
-      - deploy-image-to-ecs:
-          requires:
-            - build-image-to-ecr
+      - deploy-to-eks:
+       #   requires:
+      #      - build-image-to-ecr
           filters:
             branches:
               only: [ersel-dev, dev, master]
