@@ -98,7 +98,7 @@ jobs:
           name: Install kubectl
           command: |
             # Download the latest release of kubectl
-            curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+            curl -LO "https://dl.k8s.io/release/$(curl -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
             # Make the kubectl binary executable
             chmod +x ./kubectl
             # Move the binary in to your PATH
