@@ -97,11 +97,10 @@ jobs:
       - run:
           name: Install kubectl
           command: |
-            # Download the latest release of kubectl
-            curl -LO "https://dl.k8s.io/release/$(curl -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-            # Make the kubectl binary executable
+            KUBECTL_VERSION=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)
+            echo "Kubectl version: $KUBECTL_VERSION"
+            curl -LO "https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl"
             chmod +x ./kubectl
-            # Move the binary in to your PATH
             sudo mv ./kubectl /usr/local/bin/kubectl
       - run:
           name: Set up kubeconfig
