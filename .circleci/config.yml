@@ -111,11 +111,11 @@ jobs:
           name: Deploy to EKS
           command: |
             kubectl apply -f deployment.yaml
-            kubectl rollout status deployment/training-app-deployment
+            kubectl rollout status default/training-app-deployment
       - run:
           name: Deploy to EKS
           command: |
-            kubectl set image deployment/training-app-deployment container_name=${AWS_ECR_ACCOUNT_URL}/training-app-ecr:latest
+            kubectl set image default/training-app-deployment container_name=${AWS_ECR_ACCOUNT_URL}/training-app-ecr:latest
 
 workflows:
   version: 2
