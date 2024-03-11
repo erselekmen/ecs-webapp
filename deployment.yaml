@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: training-app-deployment
+  labels:
+    app: training-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: training-app
+  template:
+    metadata:
+      labels:
+        app: training-app
+    spec:
+      containers:
+      - name: eks-grpc-container
+        image: 110975517810.dkr.ecr.eu-central-1.amazonaws.com/training-app-ecr:latest
+        ports:
+        - containerPort: 80
+
