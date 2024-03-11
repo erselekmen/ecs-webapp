@@ -107,10 +107,14 @@ jobs:
           command: |
             aws eks --region $AWS_REGION update-kubeconfig --name $EKS_CLUSTER_NAME
       - run:
+          name: Get Deployments
+          command: |
+            kubectl get deployments
+      - run:
           name: Deploy to EKS
           command: |
             # Now that kubectl is installed, we can use it to update the deployment
-            kubectl set image 110975517810.dkr.ecr.eu-central-1.amazonaws.com/training-app-ecr:latest container_name=eks-grpc-cluster.eu-central-1.eksctl.io
+            kubectl set image  container_name=110975517810.dkr.ecr.eu-central-1.amazonaws.com/training-app-ecr:latest
             
 
 
