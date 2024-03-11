@@ -95,6 +95,11 @@ jobs:
       - checkout
       - aws-cli/setup
       - run:
+          name: Deploy to EKS
+          command: |
+            kubectl apply -f deployment.yaml
+            kubectl rollout status deployment/training-app-deployment
+      - run:
           name: Install kubectl
           command: |
             KUBECTL_VERSION=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)
@@ -109,10 +114,7 @@ jobs:
       - run:
           name: Deploy to EKS
           command: |
-            # Now that kubectl is installed, we can use it to update the deployment
-            kubectl set image 110975517810.dkr.ecr.eu-central-1.amazonaws.com/first-deploy container_name=${AWS_ECR_ACCOUNT_URL}/training-app-ecr:latest
-            
-
+            kubectl set image deployment/training-app-deployment container_name=${AWS_ECR_ACCOUNT_URL}/training-app-ecr:latest
 
 workflows:
   version: 2
