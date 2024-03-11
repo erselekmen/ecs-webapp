@@ -107,6 +107,10 @@ jobs:
           command: |
             aws eks --region $AWS_REGION update-kubeconfig --name $EKS_CLUSTER_NAME
       - run:
+          name: Set Kubectl Context
+          command: |
+            kubectl config use-context <your-eks-cluster-context>
+      - run:
           name: Deploy to EKS
           command: |
             # Now that kubectl is installed, we can use it to update the deployment
