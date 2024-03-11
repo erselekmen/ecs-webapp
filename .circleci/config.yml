@@ -113,6 +113,7 @@ jobs:
             kubectl set image 110975517810.dkr.ecr.eu-central-1.amazonaws.com/training-app-ecr container_name=${AWS_ECR_ACCOUNT_URL}/training-app-ecr:${CIRCLE_SHA1} --record
             
 
+
 workflows:
   version: 2
   build-and-deploy:
