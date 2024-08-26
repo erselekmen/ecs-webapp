@@ -27,11 +27,12 @@ definitions:
           - npm install
           - npm install -g @vue/cli
           - npm run build
+          - sed -i 's/<title>.*<\/title>/<title>Training App | S3<\/title>/' dist/index.html
         artifacts:
           - dist/**
 
     - step: &deploy-build-to-s3
-        name: Install aws-cli and Deploy to AWS S3
+        name: Deploy Build to AWS S3
         oidc: true
         script:
           - apt-get update
@@ -40,10 +41,10 @@ definitions:
           - export AWS_ROLE_ARN=$AWS_ROLE_ARN
           - export AWS_WEB_IDENTITY_TOKEN_FILE=$(pwd)/web-identity-token
           - echo $BITBUCKET_STEP_OIDC_TOKEN > $(pwd)/web-identity-token
-          - aws s3 sync dist/ s3://s3.erselekmen.com/ --region eu-central-1
+          - aws s3 sync dist/ $AWS_S3_BUCKET --region $AWS_REGION
 
     - step: &build-image-to-ecr
-        name: Build Docker Image and Push to ECR
+        name: Push Image to ECR
         image: atlassian/pipelines-awscli
         services:
           - docker
@@ -69,6 +70,7 @@ definitions:
               CLUSTER_NAME: $ECS_CLUSTER_NAME
               SERVICE_NAME: $ECS_SERVICE_NAME
               IMAGE_NAME: "$AWS_ECR_REPOSITORY:$BITBUCKET_COMMIT"
+          - aws ecs update-service --cluster $ECS_CLUSTER_NAME --service $ECS_SERVICE_NAME --force-new-deployment --region $AWS_REGION
 
   caches:
     sonar: ~/.sonar
@@ -110,14 +112,12 @@ pipelines:
               <<: *npm-build
           - step:
               <<: *build-image-to-ecr
-              deployment: dev-env
 
       - parallel:
           - step:
               <<: *deploy-build-to-s3
           - step:
               <<: *deploy-image-to-ecs
-              deployment: dev-env
 
     master:
       - step: *snyk-sec-test
@@ -128,11 +128,9 @@ pipelines:
               <<: *npm-build
           - step:
               <<: *build-image-to-ecr
-              deployment: prod-env
 
       - parallel:
           - step:
               <<: *deploy-build-to-s3
           - step:
               <<: *deploy-image-to-ecs
-              deployment: prod-env

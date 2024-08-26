@@ -1,4 +1,4 @@
-FROM node:lts-alpine as build-stage
+FROM node:lts-alpine AS build-stage
 
 WORKDIR /app
 
@@ -10,8 +10,9 @@ COPY . .
 
 RUN npm run build
 
+RUN sed -i 's/<title>.*<\/title>/<title>Training App | ECS<\/title>/' dist/index.html
 
-FROM nginx:stable-alpine as production-stage
+FROM nginx:stable-alpine AS production-stage
 
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 
