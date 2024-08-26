@@ -9,7 +9,17 @@ definitions:
           - snyk auth $SNYK_TOKEN
           - snyk test --severity-threshold=low --org=erselekmen27 || true
 
-    - step: &install-and-build
+    - step: &sonarqube-quality-test
+        name: SonarQube Code Quality Analysis
+        clone:
+          depth: full
+        script:
+          - pipe: sonarsource/sonarqube-scan:1.0.0
+            variables:
+              SONAR_HOST_URL: ${SQ_HOST_URL}
+              SONAR_TOKEN: ${SQ_TOKEN}
+
+    - step: &npm-build
         name: Install Dependencies and Build
         caches:
           - node
@@ -18,9 +28,9 @@ definitions:
           - npm install -g @vue/cli
           - npm run build
         artifacts:
-          - dist/** # Path to the build directory
+          - dist/**
 
-    - step: &deploy-to-s3
+    - step: &deploy-build-to-s3
         name: Install aws-cli and Deploy to AWS S3
         oidc: true
         script:
@@ -30,28 +40,99 @@ definitions:
           - export AWS_ROLE_ARN=$AWS_ROLE_ARN
           - export AWS_WEB_IDENTITY_TOKEN_FILE=$(pwd)/web-identity-token
           - echo $BITBUCKET_STEP_OIDC_TOKEN > $(pwd)/web-identity-token
-          - aws s3 sync dist/ s3://training-app-data/
+          - aws s3 sync dist/ s3://s3.erselekmen.com/ --region eu-central-1
+
+    - step: &build-image-to-ecr
+        name: Build Docker Image and Push to ECR
+        image: atlassian/pipelines-awscli
+        services:
+          - docker
+        script:
+          - docker build -t $AWS_ECR_REPOSITORY:latest -t $BITBUCKET_COMMIT .
+          - pipe: atlassian/aws-ecr-push-image:2.3.0
+            variables:
+              AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+              AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+              AWS_DEFAULT_REGION: $AWS_REGION
+              IMAGE_NAME: $AWS_ECR_REPOSITORY
+              TAG: 'latest, $BITBUCKET_COMMIT'
+
+    - step: &deploy-image-to-ecs
+        name: Deploy to ECS
+        image: atlassian/pipelines-awscli
+        script:
+          - pipe: atlassian/aws-ecs-deploy:1.12.1
+            variables:
+              AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+              AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+              AWS_DEFAULT_REGION: $AWS_REGION
+              CLUSTER_NAME: $ECS_CLUSTER_NAME
+              SERVICE_NAME: $ECS_SERVICE_NAME
+              IMAGE_NAME: "$AWS_ECR_REPOSITORY:$BITBUCKET_COMMIT"
+
+  caches:
+    sonar: ~/.sonar
+
+clone:
+  depth: full
 
 
 pipelines:
+  default:
+    - step:
+        <<: *snyk-sec-test
+    - step:
+        <<: *sonarqube-quality-test
+
   branches:
+    ersel-dev:
+      - step: *snyk-sec-test
+      - step: *sonarqube-quality-test
+
+      - parallel:
+          - step:
+              <<: *npm-build
+          - step:
+              <<: *build-image-to-ecr
+
+      - parallel:
+          - step:
+              <<: *deploy-build-to-s3
+          - step:
+              <<: *deploy-image-to-ecs
+
     dev:
       - step: *snyk-sec-test
-      - step: *install-and-build
-      - step: *deploy-to-s3
+      - step: *sonarqube-quality-test
 
+      - parallel:
+          - step:
+              <<: *npm-build
+          - step:
+              <<: *build-image-to-ecr
+              deployment: dev-env
 
-#definitions:
-#  steps:
-#    - step: &sonarqube-quality-test
-#        name: SonarQube Analysis
-#        image: sonarsource/sonar-scanner-cli:latest
-#        script:
-#          - sonar-scanner -Dsonar.projectKey=$SQ_PROJECT_KEY -Dsonar.host.url=$SQ_EC2_HOST:$SQ_EC2_PORT -Dsonar.login=$SQ_TOKEN
+      - parallel:
+          - step:
+              <<: *deploy-build-to-s3
+          - step:
+              <<: *deploy-image-to-ecs
+              deployment: dev-env
 
+    master:
+      - step: *snyk-sec-test
+      - step: *sonarqube-quality-test
 
-#pipelines:
-#  branches:
-#    ersel-dev:
-#    - step: *sonarqube-quality-test
-#    - step: *build-and-deploy
+      - parallel:
+          - step:
+              <<: *npm-build
+          - step:
+              <<: *build-image-to-ecr
+              deployment: prod-env
+
+      - parallel:
+          - step:
+              <<: *deploy-build-to-s3
+          - step:
+              <<: *deploy-image-to-ecs
+              deployment: prod-env
